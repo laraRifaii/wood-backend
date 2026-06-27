@@ -6,6 +6,11 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { AboutModule } from './about/about.module';
+import { GalleryModule } from './gallery/gallery.module';
+import { HeroModule } from './hero/hero.module';
+import { ServicesModule } from './services/services.module';
+import { WoodTypesModule } from './wood-types/wood-types.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -15,6 +20,11 @@ import { join } from 'path';
     }),
     PrismaModule,
     AuthModule,
+    HeroModule,
+    WoodTypesModule,
+    ServicesModule,
+    GalleryModule,
+    AboutModule,
   ],
   controllers: [AppController],
   providers: [AppService],

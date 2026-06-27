@@ -20,3 +20,79 @@ model User {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
+model Hero {
+  id              String   @id @default(uuid())
+  title           String
+  subtitle        String
+  ctaText         String
+  ctaLink         String
+  backgroundImage String?
+  updatedAt       DateTime @updatedAt
+}
+
+model WoodType {
+  id        String          @id @default(uuid())
+  name      String
+  pros      String[]
+  cons      String[]
+  order     Int             @default(0)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  images    WoodTypeImage[]
+}
+
+model WoodTypeImage {
+  id         String   @id @default(uuid())
+  url        String
+  order      Int      @default(0)
+  woodTypeId String
+  woodType   WoodType @relation(fields: [woodTypeId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+}
+
+model Service {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  icon        String?
+  image       String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model GalleryImage {
+  id        String   @id @default(uuid())
+  src       String
+  alt       String
+  category  String   @default("Uncategorized")
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AboutSection {
+  id          String   @id @default(uuid())
+  brandName   String
+  description String
+  image1      String?
+  image2      String?
+  image3      String?
+  updatedAt   DateTime @updatedAt
+}
+
+model AdvantagesSection {
+  id        String          @id @default(uuid())
+  image     String?
+  cta       String
+  updatedAt DateTime        @updatedAt
+  items     AdvantageItem[]
+}
+
+model AdvantageItem {
+  id                  String            @id @default(uuid())
+  description         String
+  order               Int               @default(0)
+  advantagesSectionId String
+  advantagesSection   AdvantagesSection @relation(fields: [advantagesSectionId], references: [id], onDelete: Cascade)
+}
