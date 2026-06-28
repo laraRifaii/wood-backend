@@ -11,13 +11,15 @@ import { GalleryModule } from './gallery/gallery.module';
 import { HeroModule } from './hero/hero.module';
 import { ServicesModule } from './services/services.module';
 import { WoodTypesModule } from './wood-types/wood-types.module';
+import { AdvantagesModule } from './advantages/advantages.module';
+import { ContactModule } from './contact/contact.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'uploads'),
-      serveRoot: '/uploads',
-    }),
+  rootPath: join(process.cwd(), 'uploads'),
+  serveRoot: '/uploads',
+}),
     PrismaModule,
     AuthModule,
     HeroModule,
@@ -25,6 +27,8 @@ import { WoodTypesModule } from './wood-types/wood-types.module';
     ServicesModule,
     GalleryModule,
     AboutModule,
+    AdvantagesModule,
+    ContactModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -27,6 +27,9 @@ model Hero {
   ctaText         String
   ctaLink         String
   backgroundImage String?
+  image1          String?
+  image2          String?
+  image3          String?
   updatedAt       DateTime @updatedAt
 }
 
@@ -95,4 +98,11 @@ model AdvantageItem {
   order               Int               @default(0)
   advantagesSectionId String
   advantagesSection   AdvantagesSection @relation(fields: [advantagesSectionId], references: [id], onDelete: Cascade)
+}
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String
+  question  String
+  createdAt DateTime @default(now())
 }
