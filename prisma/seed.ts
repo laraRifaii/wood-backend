@@ -35,23 +35,52 @@ async function main() {
         subtitle: 'Handcrafted furniture and woodwork from premium hardwoods.',
         ctaText: 'View Our Work',
         ctaLink: '/gallery',
-        backgroundImage: '/images/hero-bg.jpg',
+        backgroundImage: '/images/background.jpg',
       },
     });
     console.log('✅ Default hero seeded');
   }
 
-  // Seed wood types
+  // Seed wood types with images
   const woodCount = await prisma.woodType.count();
   if (woodCount === 0) {
-    await prisma.woodType.createMany({
-      data: [
-        { name: 'Oak', pros: ['Durability', 'Beautiful texture', 'Water resistance'], cons: ['Expensive'], order: 0 },
-        { name: 'Buk', pros: ['Durability'], cons: ['Hard to handle'], order: 1 },
-        { name: 'Ash', pros: ['Durability'], cons: ['Hard to handle'], order: 2 },
-      ],
+    const oak = await prisma.woodType.create({
+      data: {
+        name: 'Oak',
+        pros: ['Durability', 'Beautiful texture', 'Water resistance'],
+        cons: ['Expensive'],
+        order: 0,
+        images: {
+          create: [{ url: '/images/oak.jpg', order: 0 }],
+        },
+      },
     });
-    console.log('✅ Wood types seeded');
+
+    const buk = await prisma.woodType.create({
+      data: {
+        name: 'Buk',
+        pros: ['Durability'],
+        cons: ['Hard to handle'],
+        order: 1,
+        images: {
+          create: [{ url: '/images/buk.jpg', order: 0 }],
+        },
+      },
+    });
+
+    const ash = await prisma.woodType.create({
+      data: {
+        name: 'Ash',
+        pros: ['Durability'],
+        cons: ['Hard to handle'],
+        order: 2,
+        images: {
+          create: [{ url: '/images/ash.jpg', order: 0 }],
+        },
+      },
+    });
+
+    console.log('✅ Wood types seeded with images');
   }
 
   // Seed services
