@@ -17,7 +17,7 @@ async function bootstrap() {
 
   // CORS — allow your Next.js frontend
   app.enableCors({
-    origin: ['https://wood-frontend-opal.vercel.app', 'http://localhost:3000'],
+    origin: ['https://wood-frontend-lhdhh3d3t-lararifaiis-projects.vercel.app/', 'http://localhost:3000'],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
