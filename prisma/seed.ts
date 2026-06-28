@@ -1,11 +1,14 @@
 import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 import * as bcrypt from 'bcrypt';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-const prisma = new PrismaClient();
-
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL!,
+});
+const prisma = new PrismaClient({ adapter });
 async function main() {
   // Create admin user
   const existing = await prisma.user.findUnique({
@@ -88,9 +91,24 @@ async function main() {
   if (serviceCount === 0) {
     await prisma.service.createMany({
       data: [
-        { title: 'Custom Furniture', description: 'Bespoke tables, chairs, shelving, and cabinetry.', icon: 'sofa', order: 0 },
-        { title: 'Interior Woodwork', description: 'Wall cladding, ceiling beams, staircases.', icon: 'home', order: 1 },
-        { title: 'Restoration', description: 'Expert restoration of antique wooden pieces.', icon: 'wrench', order: 2 },
+        {
+          title: 'Custom Furniture',
+          description: 'Bespoke tables, chairs, shelving, and cabinetry.',
+          icon: 'sofa',
+          order: 0,
+        },
+        {
+          title: 'Interior Woodwork',
+          description: 'Wall cladding, ceiling beams, staircases.',
+          icon: 'home',
+          order: 1,
+        },
+        {
+          title: 'Restoration',
+          description: 'Expert restoration of antique wooden pieces.',
+          icon: 'wrench',
+          order: 2,
+        },
       ],
     });
     console.log('✅ Services seeded');
@@ -102,7 +120,8 @@ async function main() {
     await prisma.aboutSection.create({
       data: {
         brandName: 'BIO CWT',
-        description: 'We manufacture solid wood products according to individual drawings.',
+        description:
+          'We manufacture solid wood products according to individual drawings.',
         image1: '/images/about1.png',
         image2: '/images/about2.png',
         image3: '/images/about3.png',
@@ -121,8 +140,15 @@ async function main() {
         items: {
           create: [
             { description: 'In-house carpentry production', order: 0 },
-            { description: 'We only treat wood with environmentally friendly and safe products', order: 1 },
-            { description: 'Prices from the manufacturer, no extra charges', order: 2 },
+            {
+              description:
+                'We only treat wood with environmentally friendly and safe products',
+              order: 1,
+            },
+            {
+              description: 'Prices from the manufacturer, no extra charges',
+              order: 2,
+            },
           ],
         },
       },
