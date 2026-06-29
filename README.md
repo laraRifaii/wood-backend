@@ -39,7 +39,7 @@ A NestJS REST API powering the BioWood CMS. Handles authentication, content mana
 
 ```bash
 git clone https://github.com/laraRifaii/wood-backend.git
-cd biowood-backend
+cd wood-backend
 npm install
 ```
 
