@@ -6,7 +6,7 @@ import { UploadService } from '../common/upload.service';
 
 @Module({
   imports: [PrismaModule],
-  controllers: [AdvantagesController,UploadService],
-  providers: [AdvantagesService],
+  controllers: [AdvantagesController],
+  providers: [AdvantagesService,UploadService],
 })
 export class AdvantagesModule {}
