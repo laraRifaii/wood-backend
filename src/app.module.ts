@@ -13,13 +13,14 @@ import { ServicesModule } from './services/services.module';
 import { WoodTypesModule } from './wood-types/wood-types.module';
 import { AdvantagesModule } from './advantages/advantages.module';
 import { ContactModule } from './contact/contact.module';
+import { UploadService } from './common/upload.service';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     ServeStaticModule.forRoot({
-  rootPath: join(process.cwd(), 'uploads'),
-  serveRoot: '/uploads',
-}),
+      rootPath: join(process.cwd(), 'uploads'),
+      serveRoot: '/uploads',
+    }),
     PrismaModule,
     AuthModule,
     HeroModule,
@@ -31,6 +32,7 @@ import { ContactModule } from './contact/contact.module';
     ContactModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, UploadService],
+  exports: [UploadService],
 })
 export class AppModule {}

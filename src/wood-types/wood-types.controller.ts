@@ -1,20 +1,40 @@
 import {
-  Controller, Get, Post, Patch, Delete,
-  Body, Param, UseGuards, UseInterceptors,
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
+  UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { diskStorage, memoryStorage } from 'multer';
 import { extname } from 'path';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiConsumes,
+} from '@nestjs/swagger';
 import { WoodTypesService } from './wood-types.service';
-import { CreateWoodTypeDto, UpdateWoodTypeDto, ReorderImagesDto } from './wood-types.dto';
+import {
+  CreateWoodTypeDto,
+  UpdateWoodTypeDto,
+  ReorderImagesDto,
+} from './wood-types.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { UploadService } from '../common/upload.service';
 
 @ApiTags('Wood Types / Products')
 @Controller('wood-types')
 export class WoodTypesController {
-  constructor(private woodTypesService: WoodTypesService) {}
+  constructor(
+    private woodTypesService: WoodTypesService,
+    private uploadService: UploadService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all wood types (public)' })
@@ -57,19 +77,12 @@ export class WoodTypesController {
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Upload image for wood type (admin)' })
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads/wood-types',
-        filename: (req, file, cb) => {
-          const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, unique + extname(file.originalname));
-        },
-      }),
-    }),
-  )
-  uploadImage(@Param('id') id: string, @UploadedFile() file: Express.Multer.File) {
-    const url = `/uploads/wood-types/${file.filename}`;
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
+  async uploadImage(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const url = await this.uploadService.uploadImage(file);
     return this.woodTypesService.addImage(id, url);
   }
 

@@ -27,7 +27,17 @@ export class GalleryService {
       },
     });
   }
-
+  async uploadWithUrl(url: string, alt: string, category?: string) {
+    const count = await this.prisma.galleryImage.count();
+    return this.prisma.galleryImage.create({
+      data: {
+        src: url,
+        alt,
+        category: category || 'Uncategorized',
+        order: count,
+      },
+    });
+  }
   async update(id: string, dto: UpdateGalleryImageDto) {
     await this.findOne(id);
     return this.prisma.galleryImage.update({ where: { id }, data: dto });

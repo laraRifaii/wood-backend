@@ -10,18 +10,24 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiConsumes,
+} from '@nestjs/swagger';
 import { ServicesService } from './services.service';
 import { CreateServiceDto, UpdateServiceDto } from './services.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { UploadService } from '../common/upload.service';
+import { memoryStorage } from 'multer';
+
 
 @ApiTags('Services')
 @Controller('services')
 export class ServicesController {
-  constructor(private servicesService: ServicesService) {}
+  constructor(private servicesService: ServicesService,private uploadService: UploadService,) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all services (public)' })
@@ -55,20 +61,12 @@ export class ServicesController {
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Upload service image (admin)' })
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads/services',
-        filename: (req, file, cb) => {
-          const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, unique + extname(file.originalname));
-        },
-      }),
-    }),
-  )
-  uploadImage(@UploadedFile() file: Express.Multer.File) {
-    return { url: `/uploads/services/${file.filename}` };
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
+  async uploadImage(@UploadedFile() file: Express.Multer.File) {
+    const url = await this.uploadService.uploadImage(file);
+    return { url };
   }
+
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()

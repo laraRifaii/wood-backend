@@ -1,24 +1,44 @@
 import {
-  Controller, Get, Post, Patch, Delete,
-  Body, Param, UseGuards, UseInterceptors,
-  UploadedFile, Query,
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { diskStorage, memoryStorage } from 'multer';
 import { extname } from 'path';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { GalleryService } from './gallery.service';
 import { UpdateGalleryImageDto, ReorderGalleryDto } from './gallery.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { UploadService } from '../common/upload.service';
 
 @ApiTags('Gallery')
 @Controller('gallery')
 export class GalleryController {
-  constructor(private galleryService: GalleryService) {}
+  constructor(
+    private galleryService: GalleryService,
+    private uploadService: UploadService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all gallery images (public)' })
-  findAll() { return this.galleryService.findAll(); }
+  findAll() {
+    return this.galleryService.findAll();
+  }
 
   @Post('upload')
   @UseGuards(JwtAuthGuard)
@@ -29,21 +49,16 @@ export class GalleryController {
   @ApiQuery({ name: 'category', required: false })
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads/gallery',
-        filename: (req, file, cb) => {
-          const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, unique + extname(file.originalname));
-        },
-      }),
+      storage: memoryStorage(),
     }),
   )
-  upload(
+ async upload(
     @UploadedFile() file: Express.Multer.File,
     @Query('alt') alt?: string,
     @Query('category') category?: string,
   ) {
-    return this.galleryService.upload(file, alt, category);
+      const url = await this.uploadService.uploadImage(file);
+      return this.galleryService.uploadWithUrl(url, alt || file.originalname, category);
   }
 
   @Patch('reorder')
@@ -66,5 +81,7 @@ export class GalleryController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete gallery image (admin)' })
-  remove(@Param('id') id: string) { return this.galleryService.remove(id); }
+  remove(@Param('id') id: string) {
+    return this.galleryService.remove(id);
+  }
 }

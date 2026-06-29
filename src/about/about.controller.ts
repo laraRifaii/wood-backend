@@ -18,13 +18,17 @@ import { AboutService } from './about.service';
 import { UpdateAboutDto } from './about.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { diskStorage, memoryStorage } from 'multer';
 import { extname } from 'path';
+import { UploadService } from '../common/upload.service';
 
 @ApiTags('About Section')
 @Controller('about')
 export class AboutController {
-  constructor(private aboutService: AboutService) {}
+  constructor(
+    private aboutService: AboutService,
+    private uploadService: UploadService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Get about section (public)' })
@@ -45,18 +49,9 @@ export class AboutController {
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Upload about image (admin)' })
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads/about',
-        filename: (req, file, cb) => {
-          const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, unique + extname(file.originalname));
-        },
-      }),
-    }),
-  )
-  uploadImage(@UploadedFile() file: Express.Multer.File) {
-    return { url: `/uploads/about/${file.filename}` };
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
+  async uploadImage(@UploadedFile() file: Express.Multer.File) {
+    const url = await this.uploadService.uploadImage(file);
+    return { url };
   }
 }
