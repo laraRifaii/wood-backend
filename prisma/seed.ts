@@ -155,6 +155,18 @@ async function main() {
     });
     console.log('✅ Advantages section seeded');
   }
+  // Seed gallery
+const galleryCount = await prisma.galleryImage.count();
+if (galleryCount === 0) {
+  await prisma.galleryImage.createMany({
+    data: [
+      { src: '/images/gallery.jpg', alt: 'Wood interior project', category: 'Interior', order: 0 },
+      { src: '/images/background.jpg', alt: 'Custom oak table', category: 'Furniture', order: 1 },
+     
+    ],
+  });
+  console.log('✅ Gallery seeded');
+}
 
   console.log('🌱 Seed complete');
 }
