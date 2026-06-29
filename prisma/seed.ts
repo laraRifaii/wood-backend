@@ -35,8 +35,8 @@ async function main() {
     await prisma.hero.create({
       data: {
         title: 'SOLID\nWOOD\nPRODUCTS',
-        subtitle: 'Handcrafted furniture and woodwork from premium hardwoods.',
-        ctaText: 'View Our Work',
+        subtitle: 'Oak, beech, ash from 1700 CZK per m3',
+        ctaText: 'Order',
         ctaLink: '/gallery',
         backgroundImage: '/images/background.jpg',
       },
