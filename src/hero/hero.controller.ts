@@ -46,10 +46,11 @@ export class HeroController {
 
   @Post('upload')
   @UseGuards(JwtAuthGuard)
+  
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Upload hero image (admin)' })
-  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage(),limits: { fileSize: 10 * 1024 * 1024 },}))
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
     const url = await this.uploadService.uploadImage(file);
     return { url };
